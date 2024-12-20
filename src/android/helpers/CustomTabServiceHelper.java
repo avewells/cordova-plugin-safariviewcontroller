@@ -65,6 +65,7 @@ public class CustomTabServiceHelper implements ServiceConnectionCallback {
         if (mClient == null) {
             mCustomTabsSession = null;
         } else if (mCustomTabsSession == null) {
+            // Let the activity create the session with callback
             mCustomTabsSession = mClient.newSession(null);
         }
         return mCustomTabsSession;
@@ -116,11 +117,6 @@ public class CustomTabServiceHelper implements ServiceConnectionCallback {
         mClient = null;
         mCustomTabsSession = null;
         if (mConnectionCallback != null) mConnectionCallback.onCustomTabsDisconnected();
-    }
-
-    @Override
-    public void onNavigationEvent(int navigationEvent, Bundle extras) {
-        // Handle navigation events if needed
     }
 
     public CustomTabsClient getClient() {

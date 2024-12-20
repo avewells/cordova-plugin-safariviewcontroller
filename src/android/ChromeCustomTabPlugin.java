@@ -243,9 +243,9 @@ public class ChromeCustomTabPlugin extends CordovaPlugin{
 
     private CustomTabsSession getSession() {
         CustomTabsSession session = mCustomTabPluginHelper.getSession();
-        if (session != null) {
-            // Use the correct method to set callback
-            session.setCallback(navigationCallback);
+        // For newer versions of CustomTabs, we need to create a new session with the callback
+        if (session == null && mCustomTabPluginHelper.getClient() != null) {
+            session = mCustomTabPluginHelper.getClient().newSession(navigationCallback);
         }
         return session;
     }
