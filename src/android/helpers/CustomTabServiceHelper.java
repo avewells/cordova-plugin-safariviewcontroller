@@ -23,8 +23,7 @@ import java.util.List;
 /**
  * This is a helper class to manage the connection to the Custom Tabs Service.
  */
-public class CustomTabServiceHelper implements ServiceConnectionCallback, CustomTabsCallback {
-
+public class CustomTabServiceHelper extends CustomTabsCallback implements ServiceConnectionCallback {
     private String mPackageNameToBind;
     private CustomTabsSession mCustomTabsSession;
     private CustomTabsClient mClient;
