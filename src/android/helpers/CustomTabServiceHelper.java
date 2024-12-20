@@ -11,6 +11,7 @@ import androidx.browser.customtabs.CustomTabsClient;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.browser.customtabs.CustomTabsServiceConnection;
 import androidx.browser.customtabs.CustomTabsSession;
+import androidx.browser.customtabs.CustomTabsCallback;
 import android.text.TextUtils;
 
 import org.chromium.customtabsclient.shared.CustomTabsHelper;
@@ -22,7 +23,7 @@ import java.util.List;
 /**
  * This is a helper class to manage the connection to the Custom Tabs Service.
  */
-public class CustomTabServiceHelper implements ServiceConnectionCallback {
+public class CustomTabServiceHelper implements ServiceConnectionCallback, CustomTabsCallback {
 
     private String mPackageNameToBind;
     private CustomTabsSession mCustomTabsSession;
@@ -116,6 +117,11 @@ public class CustomTabServiceHelper implements ServiceConnectionCallback {
         mClient = null;
         mCustomTabsSession = null;
         if (mConnectionCallback != null) mConnectionCallback.onCustomTabsDisconnected();
+    }
+
+    @Override
+    public void onNavigationEvent(int navigationEvent, Bundle extras) {
+        // Handle navigation events if needed
     }
 
     public CustomTabsClient getClient() {

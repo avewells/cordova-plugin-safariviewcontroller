@@ -219,8 +219,31 @@ public class ChromeCustomTabPlugin extends CordovaPlugin{
         }
     }
 
+    @Override
+    public void onNavigationEvent(int navigationEvent, Bundle extras) {
+        if (navigationEvent == CustomTabsCallback.NAVIGATION_STARTED) {
+            String url = extras.getString(CustomTabsCallback.KEY_URL);
+            if (url != null && callbackContext != null) {
+                JSONObject result = new JSONObject();
+                try {
+                    result.put("event", "urlChanged");
+                    result.put("url", url);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, result);
+                pluginResult.setKeepCallback(true);
+                callbackContext.sendPluginResult(pluginResult);
+            }
+        }
+    }
+
     private CustomTabsSession getSession() {
-        return mCustomTabPluginHelper.getSession();
+        CustomTabsSession session = mCustomTabPluginHelper.getSession();
+        if (session != null) {
+            session.setNavigationEventCallback(this);
+        }
+        return session;
     }
 
     private boolean bindCustomTabsService() {
