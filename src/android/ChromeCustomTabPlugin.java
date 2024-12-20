@@ -36,6 +36,27 @@ public class ChromeCustomTabPlugin extends CordovaPlugin{
     private  CallbackContext callbackContext;
     private Bundle mStartAnimationBundle;
 
+    private CustomTabsCallback navigationCallback = new CustomTabsCallback() {
+        @Override
+        public void onNavigationEvent(int navigationEvent, Bundle extras) {
+            if (navigationEvent == CustomTabsCallback.TAB_SHOWN && extras != null) {
+                String url = extras.getString("url");
+                if (url != null && callbackContext != null) {
+                    JSONObject result = new JSONObject();
+                    try {
+                        result.put("event", "urlChanged");
+                        result.put("url", url);
+                        PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, result);
+                        pluginResult.setKeepCallback(true);
+                        callbackContext.sendPluginResult(pluginResult);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    };
+
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
@@ -220,29 +241,11 @@ public class ChromeCustomTabPlugin extends CordovaPlugin{
         }
     }
 
-    @Override
-    public void onNavigationEvent(int navigationEvent, Bundle extras) {
-        if (navigationEvent == CustomTabsCallback.NAVIGATION_STARTED) {
-            String url = extras.getString(CustomTabsCallback.KEY_URL);
-            if (url != null && callbackContext != null) {
-                JSONObject result = new JSONObject();
-                try {
-                    result.put("event", "urlChanged");
-                    result.put("url", url);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, result);
-                pluginResult.setKeepCallback(true);
-                callbackContext.sendPluginResult(pluginResult);
-            }
-        }
-    }
-
     private CustomTabsSession getSession() {
         CustomTabsSession session = mCustomTabPluginHelper.getSession();
         if (session != null) {
-            session.setNavigationEventCallback(this);
+            // Use the correct method to set callback
+            session.setCallback(navigationCallback);
         }
         return session;
     }
